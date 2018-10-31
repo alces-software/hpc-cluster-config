@@ -167,7 +167,3 @@ firewall:
 postfix:
   relayhost: "<%= answer.postfix_relay %>"
 
-is_vm: '<%= answer.is_vm %>'
-libvirt_host: '<%= answer.libvirt_host %>'
-vm_disk_pool: '<%= answer.vm_disk_pool %>'
-vm_mac_address_build: '<%= answer.vm_mac_address_build %>'

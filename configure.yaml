@@ -264,49 +264,6 @@ questions:
     question: 'Hostname for node EXT'
     default: 'controller.<%= config.networks.ext.domain %>'
 
-  # VM questions
-  - &is_vm
-    identifier: is_vm
-    question: 'Indicate whether a node or group is a VM'
-    type: 'boolean'
-
-  - &libvirt_host
-    identifier: libvirt_host
-    question: 'Enter the IP or hostname of the Libvirt host'
-
-  - &vm_memory
-    identifier: vm_memory
-    question: 'Amount of memory to allocate to a VM in GiB'
-    type: 'integer'
-    default: 4
-
-  - &vm_cpus
-    identifier: vm_cpus
-    question: 'Number of CPU cores to allocate to a VM'
-    type: 'integer'
-    default: 1
-
-  - &vm_root_disk_size
-    identifier: vm_root_disk_size
-    question: 'Size of the VM root disk to allocate in GB'
-    type: 'integer'
-    default: 8
-
-  - &vm_disk_pool
-    identifier: vm_disk_pool
-    question: 'Specify the Libvirt disk pool name'
-    default: 'vm'
-
-  - &vm_disk_pool_path
-    identifier: vm_disk_pool_path
-    question: 'Specify the Libvirt disk pool path'
-    default: '/opt/vm'
-
-  - &vm_mac_address_build
-    identifier: vm_mac_address_build
-    question: 'Build network interface MAC address'
-    default: '00:<%= (1..5).map{"%0.2X"%rand(256)}.join(":") %>'
-
 domain:
   - *cluster_name
   - *domain
@@ -371,15 +328,6 @@ group:
     - *ib_network_ip
     - *ib_network_interface
 
-  - <<: *is_vm
-    dependent:
-    - *libvirt_host
-    - *vm_memory
-    - *vm_cpus
-    - *vm_root_disk_size
-    - *vm_disk_pool
-    - *vm_disk_pool_path
-
 node:
   - *root_password
 
@@ -406,16 +354,6 @@ node:
     dependent:
     - *ib_network_ip_node
     - *ib_network_interface
-
-  - <<: *is_vm
-    dependent:
-    - *libvirt_host
-    - *vm_memory
-    - *vm_cpus
-    - *vm_root_disk_size
-    - *vm_disk_pool
-    - *vm_disk_pool_path
-    - *vm_mac_address_build
 
 local:
   - <<: *pri_network_defined
