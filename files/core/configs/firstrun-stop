@@ -1,7 +1,0 @@
-#!/bin/bash
-/bin/systemctl disable firstrun.service
-if [ -f /firstrun.reboot ]; then
-  echo -n "Reboot flag set.. Rebooting.."
-  rm -f /firstrun.rebooot
-  shutdown -r now
-fi
