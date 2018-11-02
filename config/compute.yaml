@@ -1,2 +1,5 @@
 kernelappendoptions: "console=tty0 console=ttyS1,115200n8"
 disklabel: 'sda'
+networks:
+  mgt:
+    defined: false
