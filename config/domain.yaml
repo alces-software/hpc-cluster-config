@@ -100,27 +100,27 @@ files:
   platform:
     - /opt/alces/install/scripts/aws.sh
   main:
-    - main.sh
+    - /var/lib/metalware/repo/files/main.sh
   setup:
-    - local-script.sh
+    - /var/lib/metalware/repo/files/local-script.sh
   core:
-    - core/base.sh
-    - core/chrony.sh
-    - core/configs/chrony.conf
-    - core/firstrun_scripts/chronyfix.bash
-    - core/syslog.sh
-    - core/configs/metalware.conf
-    - core/configs/rsyslog-remote
-    - core/firstrun_scripts/firewall_rsyslog.bash
-    - core/postfix.sh
-    - core/network-base.sh
-    - core/network-ipmi.sh
-    - core/network-join.sh
-    - core/networking.sh
-    - core/configs/authorized_keys
-    - core/firstrun_scripts/firewall_main.bash
+    - /var/lib/metalware/repo/files/core/base.sh
+    - /var/lib/metalware/repo/files/core/chrony.sh
+    - /var/lib/metalware/repo/files/core/configs/chrony.conf
+    - /var/lib/metalware/repo/files/core/firstrun_scripts/chronyfix.bash
+    - /var/lib/metalware/repo/files/core/syslog.sh
+    - /var/lib/metalware/repo/files/core/configs/metalware.conf
+    - /var/lib/metalware/repo/files/core/configs/rsyslog-remote
+    - /var/lib/metalware/repo/files/core/firstrun_scripts/firewall_rsyslog.bash
+    - /var/lib/metalware/repo/files/core/postfix.sh
+    - /var/lib/metalware/repo/files/core/network-base.sh
+    - /var/lib/metalware/repo/files/core/network-ipmi.sh
+    - /var/lib/metalware/repo/files/core/network-join.sh
+    - /var/lib/metalware/repo/files/core/networking.sh
+    - /var/lib/metalware/repo/files/core/configs/authorized_keys
+    - /var/lib/metalware/repo/files/core/firstrun_scripts/firewall_main.bash
   scripts:
-    - local-script.sh
+    - /var/lib/metalware/repo/files/local-script.sh
 
 ntp:
   is_server: false

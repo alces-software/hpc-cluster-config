@@ -28,35 +28,35 @@ networks:
 build_method: self
 files:
   setup:
-    - local/dns.sh
-    - local/xinetd.sh
-    - local/dhcp.sh
-    - local/http.sh
+    - /var/lib/metalware/repo/files/local/dns.sh
+    - /var/lib/metalware/repo/files/local/xinetd.sh
+    - /var/lib/metalware/repo/files/local/dhcp.sh
+    - /var/lib/metalware/repo/files/local/http.sh
   main:
-    - local/main.sh
+    - /var/lib/metalware/repo/files/local/main.sh
   core:
-    - core/base.sh
-    - core/chrony.sh
-    - core/configs/chrony.conf
-    - core/firstrun_scripts/chronyfix.bash
-    - core/syslog.sh
-    - core/configs/metalware.conf
-    - core/configs/rsyslog-remote
-    - core/firstrun_scripts/firewall_rsyslog.bash
-    - core/postfix.sh
-    - core/network-base.sh
-    - core/network-ipmi.sh
-    - core/network-join.sh
-    - core/networking.sh
-    - core/configs/authorized_keys
-    - local/extra.sh
-    - core/configs/dhcpd.conf
-    - core/configs/pxelinux_default
-    - core/configs/named.conf
-    - core/configs/http/deployment.conf
-    - core/configs/http/installer.conf
-    - core/configs/kscomplete.php
-    - core/firstrun_scripts/firewall_main.bash
+    - /var/lib/metalware/repo/files/core/base.sh
+    - /var/lib/metalware/repo/files/core/chrony.sh
+    - /var/lib/metalware/repo/files/core/configs/chrony.conf
+    - /var/lib/metalware/repo/files/core/firstrun_scripts/chronyfix.bash
+    - /var/lib/metalware/repo/files/core/syslog.sh
+    - /var/lib/metalware/repo/files/core/configs/metalware.conf
+    - /var/lib/metalware/repo/files/core/configs/rsyslog-remote
+    - /var/lib/metalware/repo/files/core/firstrun_scripts/firewall_rsyslog.bash
+    - /var/lib/metalware/repo/files/core/postfix.sh
+    - /var/lib/metalware/repo/files/core/network-base.sh
+    - /var/lib/metalware/repo/files/core/network-ipmi.sh
+    - /var/lib/metalware/repo/files/core/network-join.sh
+    - /var/lib/metalware/repo/files/core/networking.sh
+    - /var/lib/metalware/repo/files/core/configs/authorized_keys
+    - /var/lib/metalware/repo/files/local/extra.sh
+    - /var/lib/metalware/repo/files/core/configs/dhcpd.conf
+    - /var/lib/metalware/repo/files/core/configs/pxelinux_default
+    - /var/lib/metalware/repo/files/core/configs/named.conf
+    - /var/lib/metalware/repo/files/core/configs/http/deployment.conf
+    - /var/lib/metalware/repo/files/core/configs/http/installer.conf
+    - /var/lib/metalware/repo/files/core/configs/kscomplete.php
+    - /var/lib/metalware/repo/files/core/firstrun_scripts/firewall_main.bash
 build:
   pxeboot_path: /var/lib/tftpboot/boot
 ntp:
