@@ -1,21 +1,19 @@
 networks:
   pri:
-    defined: <%= answer.pri_network_defined %>
-    ip: <%= answer.pri_network_ip_node || answer.pri_network_ip_node %>
-    short_hostname: <%= answer.pri_network_short_hostname %>
+    defined: true
+    ip: 10.10.0.1
+    short_hostname: controller.pri
     interface: <%= answer.pri_network_interface %>
   mgt:
-    defined: <%= answer.mgt_network_defined %>
-    ip: <%= answer.mgt_network_ip_node || answer.mgt_network_ip_node %>
-    short_hostname: <%= answer.mgt_network_short_hostname %>
+    ip: 10.11.100.1
+    short_hostname: controller.mgt
     interface: <%= answer.mgt_network_interface %>
   bmc:
-    defined: <%= answer.bmc_network_defined %>
-    ip: <%= answer.bmc_network_ip_node || answer.bmc_network_ip_node %>
+    ip: 10.11.0.1
   ib:
     defined: <%= answer.ib_network_defined %>
-    ip: <%= answer.ib_network_ip_node || answer.ib_network_ip_node %>
-    short_hostname: <%= answer.ib_network_short_hostname %>
+    ip: 10.12.0.1
+    short_hostname: controller.ib
     interface: <%= answer.ib_network_interface %>
   ext:
     defined: <%= answer.ext_network_defined %>

@@ -19,57 +19,57 @@ jobid: ""
 # Properties for specific config.networks.
 networks:
   pri:
-    defined: <%= answer.pri_network_defined %>
+    defined: true
     interface: "<%= answer.pri_network_interface %>"
     hostname: "<%= config.networks.pri.short_hostname %>.<%= config.domain %>"
-    domain: "<%= answer.pri_network_domain %>"
+    domain: "pri"
     short_hostname: "<%= node.name %>.<%= config.networks.pri.domain %>"
-    ip: "<%= answer.pri_network_ip_node || answer.pri_network_ip %>"
-    netmask: "<%= answer.pri_network_netmask %>"
-    network: "<%= answer.pri_network_network %>"
-    gateway: "<%= answer.pri_network_gateway %>"
+    ip: "10.10.<%= node.group.index %>.<%= node.index %>"
+    netmask: "255.255.0.0" 
+    network: "10.10.0.0"
+    gateway: "10.10.0.1"
     primary: true
     named_fwd_zone: "<%= config.networks.pri.domain %>.<%= config.domain %>"
     named_rev_zone: <% split_net = config.networks.pri.network.split(/\./) -%><%= split_net[1] %>.<%= split_net[0] %>
     firewallpolicy: trusted
 
   mgt:
-    defined: <%= answer.mgt_network_defined %>
+    defined: "<%= if answer.cloud_or_metal == 'cloud' then false else true end %>"
     interface: "<%= answer.mgt_network_interface %>"
     hostname: "<%= config.networks.mgt.short_hostname %>.<%= config.domain %>"
-    domain: "<%= answer.mgt_network_domain %>"
+    domain: "mgt"
     short_hostname: "<%= node.name %>.<%= config.networks.mgt.domain %>"
-    ip: "<%= answer.mgt_network_ip_node || answer.mgt_network_ip %>"
-    netmask: "<%= answer.mgt_network_netmask %>"
-    network: "<%= answer.mgt_network_network %>"
+    ip: "10.11.<%= node.group.index.to_i + 100 %>.<%= node.index %>"
+    netmask: "255.255.0.0"
+    network: "10.11.0.0"
     gateway:
     named_fwd_zone: "<%= config.networks.mgt.domain %>.<%= config.domain %>"
     named_rev_zone: <% split_net = config.networks.mgt.network.split(/\./) -%><%= split_net[1] %>.<%= split_net[0] %>
     firewallpolicy: trusted
 
   ib:
-    defined: <%= answer.ib_network_defined %>
+    defined: "<%= answer.ib_network_defined %>"
     interface: "<%= answer.ib_network_interface %>"
     hostname: "<%= config.networks.ib.short_hostname %>.<%= config.domain %>"
-    domain: "<%= answer.ib_network_domain %>"
+    domain: "ib"
     short_hostname: "<%= node.name %>.<%= config.networks.ib.domain %>"
-    ip: "<%= answer.ib_network_ip_node || answer.ib_network_ip %>"
-    netmask: "<%= answer.ib_network_netmask %>"
-    network: "<%= answer.ib_network_network %>"
+    ip: "10.12.<%= node.group.index %>.<%= node.index %>"
+    netmask: "255.255.0.0"
+    network: "10.12.0.0"
     gateway:
     named_fwd_zone: "<%= config.networks.ib.domain %>.<%= config.domain %>"
     named_rev_zone: <% split_net = config.networks.ib.network.split(/\./) -%><%= split_net[1] %>.<%= split_net[0] %>
     firewallpolicy: trusted
 
   bmc:
-    defined: <%= answer.bmc_network_defined %>
+    defined: "<%= if answer.cloud_or_metal == 'cloud' then false else true end %>"
     interface: bmc
     hostname: "<%= config.networks.bmc.short_hostname %>.<%= config.networks.mgt.domain %>.<%= config.domain %>"
     domain: 'bmc'
     short_hostname: "<%= node.name %>.<%= config.networks.bmc.domain %>"
-    ip: "<%= answer.bmc_network_ip_node || answer.bmc_network_ip %>"
-    netmask: "<%= answer.mgt_network_netmask %>"
-    network: "<%= answer.mgt_network_network %>"
+    ip: "10.11.<%= node.group.index %>.<%= node.index %>"
+    netmask: "255.255.0.0"
+    network: "10.11.0.0"
     gateway: 0.0.0.0
     bmcpassword: "<%= answer.bmc_password %>"
     bmcchannel: 1
@@ -91,31 +91,6 @@ disksetup: |
   logvol  /var --fstype ext4 --vgname=system --size=16384 --name=var
   logvol  /tmp --fstype ext4 --vgname=system --size=1 --grow --name=tmp
   logvol  swap  --fstype swap --vgname=system  --size=8096  --name=swap1
-
-#disklabel2: 'sdb'
-#disksetup: |
-#  clearpart --all --initlabel
-#  zerombr
-#
-#  bootloader --location=mbr --driveorder=<%= config.disklabel %> --append="$bootloaderappend"
-#
-#  #Disk partitioning information
-#  part /boot --fstype ext4 --size=1024 --asprimary --ondisk <%= config.disklabel %>
-#  part /boot2 --fstype ext4 --size=1024 --asprimary --ondisk <%= config.disklabel2 %>
-#
-#  part raid.01 --size 60000 --ondisk <%= config.disklabel %> --asprimary
-#  part raid.02 --size 60000 --ondisk <%= config.disklabel2 %> --asprimary
-#
-#  raid pv.01 --level=1 --fstype=ext4 --device=md0 raid.01 raid.02
-#  volgroup system pv.01
-#  logvol  /  --fstype ext4 --vgname=system  --size=1  --name=root --grow
-#  logvol  /var  --fstype ext4 --vgname=system  --size=16384  --name=var
-#  logvol  swap  --fstype swap --vgname=system  --size=16384  --name=swap1
-#
-#  part raid.03 --size=1 --ondisk <%= config.disklabel %> --asprimary --grow
-#  part raid.04 --size=1 --ondisk <%= config.disklabel2 %> --asprimary --grow
-#
-#  raid /tmp --fstype ext4 --fstype=ext4 --device=md1 --level=0 raid.03 raid.04
 
 templates:
   kickstart: <%= answer.kickstart_template %>

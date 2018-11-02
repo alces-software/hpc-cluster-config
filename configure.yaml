@@ -71,105 +71,28 @@ questions:
     default: 'controller.<%= config.networks.pri.domain %>.<%= config.domain %>'
 
   # Primary network.
-  - &pri_network_defined
-    identifier: pri_network_defined
-    question: 'Setup primary network?'
-    type: 'boolean'
-
-  - &pri_network_domain
-    identifier: pri_network_domain
-    question: 'Domain for the primary network'
-    default: 'pri'
-
-  - &pri_network_ip
-    identifier: pri_network_ip
-    question: 'IP for nodes on the primary network'
-    default: '10.10.<%= node.group.index %>.<%= node.index %>'
-
-  - &pri_network_ip_node
-    identifier: pri_network_ip_node
-    question: 'IP address for the node (primary network)'
-
-  - &pri_network_netmask
-    identifier: pri_network_netmask
-    question: 'Netmask for the primary network'
-    default: '255.255.0.0'
-
-  - &pri_network_network
-    identifier: pri_network_network
-    question: 'Network IP for the primary network'
-    default: '10.10.0.0'
-
-  - &pri_network_gateway
-    identifier: pri_network_gateway
-    question: "Gateway IP for the primary network (usually the controller's primary IP)"
-    default: '10.10.0.1'
-
   - &pri_network_interface
     identifier: pri_network_interface
     question: 'Interface for the primary network'
     default: 'eth0'
 
-  - &pri_network_short_hostname
-    identifier: pri_network_short_hostname
-    question: 'Hostname for node PRI'
-    default: 'controller.<%= config.networks.pri.domain %>'
+  # Cloud or metal
+  #   This is used to define whether the mgt/bmc network should be setup for the nodes
+  - &cloud_or_metal
+    identifier: cloud_or_metal
+    question: 'Is this cluster in the cloud or on metal?'
+    default: 'metal'
+    choices:
+      - 'cloud'
+      - 'metal'
 
   # Management network.
-  - &mgt_network_defined
-    identifier: mgt_network_defined
-    question: 'Setup management network?'
-    type: 'boolean'
-
-  - &mgt_network_domain
-    identifier: mgt_network_domain
-    question: 'Domain for the management network'
-    default: 'mgt'
-
-  - &mgt_network_ip
-    identifier: mgt_network_ip
-    question: 'IP for nodes on the management network'
-    default: '10.11.<%= node.group.index.to_i + 100 %>.<%= node.index %>'
-
-  - &mgt_network_ip_node
-    identifier: mgt_network_ip_node
-    question: 'IP address for the node (management network)'
-
-  - &mgt_network_netmask
-    identifier: mgt_network_netmask
-    question: 'Netmask for the management network'
-    default: '255.255.0.0'
-
-  - &mgt_network_network
-    identifier: mgt_network_network
-    question: 'Network IP for the management network'
-    default: '10.11.0.0'
-
   - &mgt_network_interface
     identifier: mgt_network_interface
     question: 'Interface for the management network'
     default: 'eth1'
 
-  - &mgt_network_short_hostname
-    identifier: mgt_network_short_hostname
-    question: 'Hostname for node MGT'
-    default: 'controller.<%= config.networks.mgt.domain %>'
-
   # BMC network
-  - &bmc_network_defined
-    identifier: bmc_network_defined
-    question: 'Setup BMC management network?'
-    type: 'boolean'
-
-  - &bmc_network_ip
-    identifier: bmc_network_ip
-    question: 'IP for nodes on the bmc network'
-    default: '10.11.<%= node.group.index %>.<%= node.index %>'
-
-  - &bmc_network_ip_node
-    identifier: bmc_network_ip_node
-    question: 'IP for the node (bmc network)'
-
   - &bmc_network_vlan
     identifier: bmc_network_vlan
     question: 'BMC network VLAN channel ID (if applicable)'
@@ -186,39 +109,10 @@ questions:
     question: 'Setup InfiniBand network?'
     type: 'boolean'
 
-  - &ib_network_domain
-    identifier: ib_network_domain
-    question: 'Domain for the InfiniBand network'
-    default: 'ib'
-
-  - &ib_network_ip
-    identifier: ib_network_ip
-    question: 'IP for nodes on the InfiniBand network'
-    default: '10.12.<%= node.group.index %>.<%= node.index %>'
-
-  - &ib_network_ip_node
-    identifier: ib_network_ip_node
-    question: 'IP for the node (InfiniBand network)'
-
-  - &ib_network_netmask
-    identifier: ib_network_netmask
-    question: 'Netmask for the InfiniBand network'
-    default: '255.255.0.0'
-
-  - &ib_network_network
-    identifier: ib_network_network
-    question: 'Network IP for the InfiniBand network'
-    default: '10.12.0.0'
-
   - &ib_network_interface
     identifier: ib_network_interface
     question: 'Interface for the InfiniBand network'
     default: 'ib0'
-
-  - &ib_network_short_hostname
-    identifier: ib_network_short_hostname
-    question: 'Hostname for node IB'
-    default: 'controller.<%= config.networks.ib.domain %>'
 
   # External network. (for local only)
   - &ext_network_defined
@@ -274,28 +168,17 @@ domain:
   - *dns_type
   - *postfix_relay
 
-  - *pri_network_domain
-  - *pri_network_ip
-  - *pri_network_netmask
-  - *pri_network_network
-  - *pri_network_gateway
   - *pri_network_interface
 
-  - *mgt_network_domain
-  - *mgt_network_ip
-  - *mgt_network_network
-  - *mgt_network_netmask
-  - *mgt_network_interface
+  - <<: *cloud_or_metal
+    dependent:
+    - *mgt_network_interface
+    - *bmc_password
+    - *bmc_network_vlan
 
-  - *bmc_network_ip
-  - *bmc_password
-
-  - *ib_network_domain
-  - *ib_network_ip
-  - *ib_network_netmask
-  - *ib_network_network
-  - *ib_network_interface
-
+  - <<: *ib_network_defined
+    dependent:
+    - *ib_network_interface
 
 group:
   - *genders_host_range
@@ -306,26 +189,16 @@ group:
   - *kickstart_template
   - *pxelinux_template
 
-  - <<: *pri_network_defined
-    dependent:
-    - *pri_network_ip
-    - *pri_network_gateway
-    - *pri_network_interface
+  - *pri_network_interface
 
-  - <<: *mgt_network_defined
+  - <<: *cloud_or_metal
     dependent:
-    - *mgt_network_ip
     - *mgt_network_interface
-
-  - <<: *bmc_network_defined
-    dependent:
-    - *bmc_network_ip
     - *bmc_password
     - *bmc_network_vlan
 
   - <<: *ib_network_defined
     dependent:
-    - *ib_network_ip
     - *ib_network_interface
 
 node:
@@ -334,50 +207,30 @@ node:
   - *kickstart_template
   - *pxelinux_template
 
-  - <<: *pri_network_defined
-    dependent:
-    - *pri_network_ip_node
-    - *pri_network_interface
+  - *pri_network_interface
 
-  - <<: *mgt_network_defined
+  - <<: *cloud_or_metal
     dependent:
-    - *mgt_network_ip_node
     - *mgt_network_interface
-
-  - <<: *bmc_network_defined
-    dependent:
-    - *bmc_network_ip_node
     - *bmc_password
     - *bmc_network_vlan
 
   - <<: *ib_network_defined
     dependent:
-    - *ib_network_ip_node
     - *ib_network_interface
 
 local:
-  - <<: *pri_network_defined
-    dependent:
-    - *pri_network_ip_node
-    - *pri_network_interface
-    - *pri_network_short_hostname
+  - *pri_network_interface
 
-  - <<: *mgt_network_defined
+  - <<: *cloud_or_metal
     dependent:
-    - *mgt_network_ip_node
     - *mgt_network_interface
-    - *mgt_network_short_hostname
-
-  - <<: *bmc_network_defined
-    dependent:
-    - *bmc_network_ip_node
     - *bmc_password
+    - *bmc_network_vlan
 
   - <<: *ib_network_defined
     dependent:
-    - *ib_network_ip_node
     - *ib_network_interface
-    - *ib_network_short_hostname
 
   - <<: *ext_network_defined
     dependent:
