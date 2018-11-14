@@ -1,243 +1,199 @@
-
 questions:
+
+  # 
+  # Base questions
+  # 
+
   - &cluster_name
     identifier: cluster_name
     question: 'Name of the cluster'
 
   - &domain
     identifier: domain
-    question: 'Fully-qualified domain name for cluster nodes'
+    question: 'Fully-qualified domain name, usually contains cluster name (e.g. mycluster.local.network)'
     default: '<%= domain.config.cluster %>.cluster.local'
-
-  - &externaldns
-    identifier: externaldns
-    question: 'External DNS server IP'
-
-  - &internaldns
-    identifier: internaldns
-    question: "Internal DNS server IP (usually the controller's primary IP)"
 
   - &root_password
     identifier: root_password
-    question: 'Root user encrypted password'
+    question: 'Password to use for root user (generate with `openssl passwd -1`)'
 
-  - &root_ssh_key
-    identifier: root_ssh_key
-    question: 'Root user SSH key'
+  #
+  # Networks
+  #
 
-  - &dns_type
-    identifier: dns_type
-    question: 'DNS type to use for cluster'
-    default: 'hosts'
-    choices:
-      - 'hosts'
-      - 'named'
+  # Network1
+  - &network1_label
+    identifier: network1_label
+    question: 'Label for network1 (to be used in hostname, if this was "pri" then a node would be called "node01.pri")'
+    default: 'pri'
 
-  - &genders_host_range
-    identifier: genders_host_range
-    question: "Genders host range specifier for this group, e.g. 'node01,node[05-08]'"
+  - &network1_ip
+    identifier: network1_ip
+    question: 'IP pattern for nodes on network1 to use'
+    default: '10.10.<%= node.group.index %>.<%= node.index %>'
 
-  - &genders_host_role
-    identifier: genders_host_role
-    question: 'What are the roles of machines in the group?'
-    default: 'compute'
-    choices:
-      - 'compute'
-      - 'service'
-
-  - &genders_all_group
-    identifier: genders_all_group
-    question: 'Include these nodes in the `all` group?'
-    type: 'boolean'
-
-  - &genders_additional_groups
-    identifier: genders_additional_groups
-    question: "Additional genders groups for this group, e.g. 'storage,rack1'; the group being configured is the primary group"
-    default: ''
-
-  - &kickstart_template
-    identifier: kickstart_template
-    question: 'Kickstart template to use'
-    default: 'default'
-
-  - &pxelinux_template
-    identifier: pxelinux_template
-    question: 'PXELINUX template to use'
-    default: 'default'
-
-  - &postfix_relay
-    identifier: postfix_relay
-    question: 'Postfix relay server for mail (usually the controller)'
-    default: 'controller.<%= config.networks.pri.domain %>.<%= config.domain %>'
-
-  # Primary network.
-  - &pri_network_interface
-    identifier: pri_network_interface
-    question: 'Interface for the primary network'
-    default: 'eth0'
-
-  # Cloud or metal
-  #   This is used to define whether the mgt/bmc network should be setup for the nodes
-  - &cloud_or_metal
-    identifier: cloud_or_metal
-    question: 'Is this cluster in the cloud or on metal?'
-    default: 'metal'
-    choices:
-      - 'cloud'
-      - 'metal'
-
-  # Management network.
-  - &mgt_network_interface
-    identifier: mgt_network_interface
-    question: 'Interface for the management network'
-    default: 'eth1'
-
-  # BMC network
-  - &bmc_network_vlan
-    identifier: bmc_network_vlan
-    question: 'BMC network VLAN channel ID (if applicable)'
-    default: ''
-
-  - &bmc_password
-    identifier: bmc_password
-    question: 'Password for BMC device over LAN'
-    default: 'Pa55Word'
-
-  # InfiniBand network.
-  - &ib_network_defined
-    identifier: ib_network_defined
-    question: 'Setup InfiniBand network?'
-    type: 'boolean'
-
-  - &ib_network_interface
-    identifier: ib_network_interface
-    question: 'Interface for the InfiniBand network'
-    default: 'ib0'
-
-  # External network. (for local only)
-  - &ext_network_defined
-    identifier: ext_network_defined
-    question: 'Setup external network?'
-    type: 'boolean'
-
-  - &ext_network_domain
-    identifier: ext_network_domain
-    question: 'Domain for the external network'
-    default: 'ext'
-
-  - &ext_network_ip
-    identifier: ext_network_ip
-    question: 'IP for nodes on the external network'
-    default: '10.101.<%= node.group.index %>.<%= node.index %>'
-
-  - &ext_network_ip_node
-    identifier: ext_network_ip_node
-    question: 'IP for the node (external network)'
-
-  - &ext_network_netmask
-    identifier: ext_network_netmask
-    question: 'Netmask for the external network'
+  - &network1_netmask
+    identifier: network1_netmask
+    question: 'Netmask for network1'
     default: '255.255.0.0'
 
-  - &ext_network_network
-    identifier: ext_network_network
-    question: 'Network IP for the external network'
-    default: '10.101.0.0'
+  - &network1_network
+    identifier: network1_network
+    question: 'IP network for network1'
+    default: '10.10.0.0'
 
-  - &ext_network_interface
-    identifier: ext_network_interface
-    question: 'Interface for the external network'
-    default: 'eth2'
+  - &network1_gateway
+    identifier: network1_gateway
+    question: 'IP of gateway for network1'
+    default: '10.10.0.1'
+    
+  # Network2
+  - &network2_defined
+    identifier: network2_defined
+    question: 'Define a second network?'
+    type: boolean
 
-  - &ext_network_gateway
-    identifier: ext_network_gateway
-    question: 'Gateway for the external network'
+  - &network2_label
+    identifier: network2_label
+    question: 'Label for network2 (to be used in hostname, if this was "mgt" then a node would be called "node01.mgt")'
+    default: 'mgt'
 
-  - &ext_network_short_hostname
-    identifier: ext_network_short_hostname
-    question: 'Hostname for node EXT'
-    default: 'controller.<%= config.networks.ext.domain %>'
+  - &network2_ip
+    identifier: network2_ip
+    question: 'IP pattern for nodes on network2 to use'
+    default: '10.11.<%= node.group.index + 100 %>.<%= node.index %>'
+
+  - &network2_netmask
+    identifier: network2_netmask
+    question: 'Netmask for network2'
+    default: '255.255.0.0'
+
+  - &network2_network
+    identifier: network2_network
+    question: 'IP network for network2'
+    default: '10.11.0.0'
+
+  # Network3
+  - &network3_defined
+    identifier: network3_defined
+    question: 'Define a third network?'
+    type: boolean
+
+  - &network3_label
+    identifier: network3_label
+    question: 'Label for network3 (to be used in hostname, if this was "ib" then a node would be called "node01.ib")'
+    default: 'ib'
+
+  - &network3_ip
+    identifier: network3_ip
+    question: 'IP pattern for nodes on network3 to use'
+    default: '10.12.<%= node.group.index %>.<%= node.index %>'
+
+  - &network3_netmask
+    identifier: network3_netmask
+    question: 'Netmask for network3'
+    default: '255.255.0.0'
+
+  - &network3_network
+    identifier: network3_network
+    question: 'IP network for network3'
+    default: '10.12.0.0'
+
+  # External network
+  - &external_defined
+    identifier: external_defined
+    question: 'Will there be an external network connection for this node/group? (usually only the controller/login nodes)'
+    type: boolean
+
+  # Group information
+  - &genders_host_range
+    identifier: genders_host_range
+    question: 'List of hosts for the group (in genders format, e.g. "node01,node[05-08]")'
+    
+  - &genders_additional_groups
+    identifier: genders_additional_groups
+    question: 'Additional genders groups for this node/group to appear in (e.g. "compute,rack1")'
+    default: ''
+
 
 domain:
   - *cluster_name
   - *domain
-  - *externaldns
-  - *internaldns
   - *root_password
-  - *root_ssh_key
-  - *dns_type
-  - *postfix_relay
 
-  - *pri_network_interface
+  - *network1_label
+  - *network1_ip
+  - *network1_netmask
+  - *network1_network
+  - *network1_gateway
 
-  - <<: *cloud_or_metal
+  - <<: *network2_defined
     dependent:
-    - *mgt_network_interface
-    - *bmc_password
-    - *bmc_network_vlan
-
-  - <<: *ib_network_defined
-    dependent:
-    - *ib_network_interface
+    - *network2_label
+    - *network2_ip
+    - *network2_netmask
+    - *network2_network
+    - <<: *network3_defined
+      dependent:
+      - *network3_label
+      - *network3_ip
+      - *network3_netmask
+      - *network3_network
 
 group:
   - *genders_host_range
-  - *genders_host_role
-  - *genders_all_group
   - *genders_additional_groups
 
-  - *kickstart_template
-  - *pxelinux_template
+  - *network1_ip
+  - *network1_netmask
+  - *network1_network
+  - *network1_gateway
 
-  - *pri_network_interface
-
-  - <<: *cloud_or_metal
+  - <<: *network2_defined
     dependent:
-    - *mgt_network_interface
-    - *bmc_password
-    - *bmc_network_vlan
-
-  - <<: *ib_network_defined
-    dependent:
-    - *ib_network_interface
+    - *network2_ip
+    - *network2_netmask
+    - *network2_network
+    - <<: *network3_defined
+      dependent:
+      - *network3_ip
+      - *network3_netmask
+      - *network3_network
 
 node:
-  - *root_password
+  - *genders_additional_groups
 
-  - *kickstart_template
-  - *pxelinux_template
+  - *network1_ip
+  - *network1_netmask
+  - *network1_network
+  - *network1_gateway
 
-  - *pri_network_interface
-
-  - <<: *cloud_or_metal
+  - <<: *network2_defined
     dependent:
-    - *mgt_network_interface
-    - *bmc_password
-    - *bmc_network_vlan
-
-  - <<: *ib_network_defined
-    dependent:
-    - *ib_network_interface
+    - *network2_ip
+    - *network2_netmask
+    - *network2_network
+    - <<: *network3_defined
+      dependent:
+      - *network3_ip
+      - *network3_netmask
+      - *network3_network
 
 local:
-  - *pri_network_interface
+  - *genders_additional_groups
 
-  - <<: *cloud_or_metal
-    dependent:
-    - *mgt_network_interface
-    - *bmc_password
-    - *bmc_network_vlan
+  - *network1_ip
+  - *network1_netmask
+  - *network1_network
+  - *network1_gateway
 
-  - <<: *ib_network_defined
+  - <<: *network2_defined
     dependent:
-    - *ib_network_interface
-
-  - <<: *ext_network_defined
-    dependent:
-    - *ext_network_domain
-    - *ext_network_ip_node
-    - *ext_network_network
-    - *ext_network_netmask
-    - *ext_network_interface
-    - *ext_network_gateway
-    - *ext_network_short_hostname
+    - *network2_ip
+    - *network2_netmask
+    - *network2_network
+    - <<: *network3_defined
+      dependent:
+      - *network3_ip
+      - *network3_netmask
+      - *network3_network

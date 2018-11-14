@@ -1,144 +1,32 @@
+cluster_name: '<%= answer.cluster_name %>'
+domain: '<%= answer.domain %>'
+root_password: '<%= answer.root_password %>'
 
-cluster: '<%= answer.cluster_name %>'
-# GENERATE with `openssl passwd -1 $PASSWD`.
-# XXX Change this so admin enters plain text root password, and we generate
-# encrypted password here?
-encrypted_root_password: '<%= answer.root_password %>'
-profile: MASTER
-ssh_key: '<%= answer.root_ssh_key %>'
-
-# Generic networking properties.
-domain: <%= answer.domain %>
-search_domains: "<% config.networks.each do |network, details| -%><% next if network.to_s == 'ext' %><%= details.domain %><%= if network.to_s == 'bmc' then '.mgt' else '' end %>.<%= config.domain %> <% end -%><%= config.domain %>"
-dns_type: "<%= answer.dns_type %>"
-externaldns: <%= answer.externaldns %>
-internaldns: <%= answer.internaldns %>
-kernelappendoptions: "console=tty0 console=ttyS1,115200n8"
-jobid: ""
-
-# Properties for specific config.networks.
 networks:
-  pri:
+  network1:
     defined: true
-    interface: "<%= answer.pri_network_interface %>"
-    hostname: "<%= config.networks.pri.short_hostname %>.<%= config.domain %>"
-    domain: "pri"
-    short_hostname: "<%= node.name %>.<%= config.networks.pri.domain %>"
-    ip: "10.10.<%= node.group.index %>.<%= node.index %>"
-    netmask: "255.255.0.0" 
-    network: "10.10.0.0"
-    gateway: "10.10.0.1"
-    primary: true
-    named_fwd_zone: "<%= config.networks.pri.domain %>.<%= config.domain %>"
-    named_rev_zone: <% split_net = config.networks.pri.network.split(/\./) -%><%= split_net[1] %>.<%= split_net[0] %>
-    firewallpolicy: trusted
-
-  mgt:
-    defined: "<%= if answer.cloud_or_metal == 'cloud' then false else true end %>"
-    interface: "<%= answer.mgt_network_interface %>"
-    hostname: "<%= config.networks.mgt.short_hostname %>.<%= config.domain %>"
-    domain: "mgt"
-    short_hostname: "<%= node.name %>.<%= config.networks.mgt.domain %>"
-    ip: "10.11.<%= node.group.index.to_i + 100 %>.<%= node.index %>"
-    netmask: "255.255.0.0"
-    network: "10.11.0.0"
-    gateway:
-    named_fwd_zone: "<%= config.networks.mgt.domain %>.<%= config.domain %>"
-    named_rev_zone: <% split_net = config.networks.mgt.network.split(/\./) -%><%= split_net[1] %>.<%= split_net[0] %>
-    firewallpolicy: trusted
-
-  ib:
-    defined: "<%= answer.ib_network_defined %>"
-    interface: "<%= answer.ib_network_interface %>"
-    hostname: "<%= config.networks.ib.short_hostname %>.<%= config.domain %>"
-    domain: "ib"
-    short_hostname: "<%= node.name %>.<%= config.networks.ib.domain %>"
-    ip: "10.12.<%= node.group.index %>.<%= node.index %>"
-    netmask: "255.255.0.0"
-    network: "10.12.0.0"
-    gateway:
-    named_fwd_zone: "<%= config.networks.ib.domain %>.<%= config.domain %>"
-    named_rev_zone: <% split_net = config.networks.ib.network.split(/\./) -%><%= split_net[1] %>.<%= split_net[0] %>
-    firewallpolicy: trusted
-
-  bmc:
-    defined: "<%= if answer.cloud_or_metal == 'cloud' then false else true end %>"
-    interface: bmc
-    hostname: "<%= config.networks.bmc.short_hostname %>.<%= config.networks.mgt.domain %>.<%= config.domain %>"
-    domain: 'bmc'
-    short_hostname: "<%= node.name %>.<%= config.networks.bmc.domain %>"
-    ip: "10.11.<%= node.group.index %>.<%= node.index %>"
-    netmask: "255.255.0.0"
-    network: "10.11.0.0"
-    gateway: 0.0.0.0
-    bmcpassword: "<%= answer.bmc_password %>"
-    bmcchannel: 1
-    bmcuser: admin
-    bmcuserid: 2
-    bmcvlan: <%= answer.bmc_network_vlan %>
-
-disklabel: 'sda'
-disksetup: |
-  clearpart --all --initlabel
-  zerombr
-  bootloader --location=mbr --driveorder=<%= config.disklabel %> --append="$bootloaderappend"
-
-  #Disk partitioning information
-  part /boot --fstype ext4 --size=4096 --asprimary --ondisk <%= config.disklabel %>
-  part pv.01 --size=1 --grow --asprimary --ondisk <%= config.disklabel %>
-  volgroup system pv.01
-  logvol  /  --fstype ext4 --vgname=system  --size=16384 --name=root
-  logvol  /var --fstype ext4 --vgname=system --size=16384 --name=var
-  logvol  /tmp --fstype ext4 --vgname=system --size=1 --grow --name=tmp
-  logvol  swap  --fstype swap --vgname=system  --size=8096  --name=swap1
-
-templates:
-  kickstart: <%= answer.kickstart_template %>
-  pxelinux: <%= answer.pxelinux_template %>
-
-files:
-  platform:
-    - /opt/alces/install/scripts/aws.sh
-  main:
-    - /var/lib/metalware/repo/files/main.sh
-  setup:
-    - /var/lib/metalware/repo/files/local-script.sh
-  core:
-    - /var/lib/metalware/repo/files/core/base.sh
-    - /var/lib/metalware/repo/files/core/chrony.sh
-    - /var/lib/metalware/repo/files/core/configs/chrony.conf
-    - /var/lib/metalware/repo/files/core/firstrun_scripts/chronyfix.bash
-    - /var/lib/metalware/repo/files/core/syslog.sh
-    - /var/lib/metalware/repo/files/core/configs/metalware.conf
-    - /var/lib/metalware/repo/files/core/configs/rsyslog-remote
-    - /var/lib/metalware/repo/files/core/firstrun_scripts/firewall_rsyslog.bash
-    - /var/lib/metalware/repo/files/core/postfix.sh
-    - /var/lib/metalware/repo/files/core/network-base.sh
-    - /var/lib/metalware/repo/files/core/network-ipmi.sh
-    - /var/lib/metalware/repo/files/core/network-join.sh
-    - /var/lib/metalware/repo/files/core/networking.sh
-    - /var/lib/metalware/repo/files/core/configs/authorized_keys
-    - /var/lib/metalware/repo/files/core/firstrun_scripts/firewall_main.bash
-  scripts:
-    - /var/lib/metalware/repo/files/local-script.sh
-
-ntp:
-  is_server: false
-  server: controller.<%= config.networks.pri.domain %>.<%= config.domain %>
-
-rsyslog:
-  is_server: false
-  server: controller
-
-firewall:
-  enabled: true
-  internal:
-    services: 'ssh http dhcp dns https mountd nfs ntp rpc-bind smtp syslog tftp tftp-client'
+    label:  '<%= answer.network1_label %>'
+    short_hostname: '<%= node.name %>.<%= config.networks.network1.label %>'
+    hostname: '<%= config.networks.network1.short_hostname %>.<%= config.domain %>' 
+    ip: <%= answer.network1_ip %>
+    netmask: <%= answer.network1_netmask %>
+    network: <%= answer.network1_network %>
+    gateway: <%= answer.network1_gateway %>
+  network2:
+    defined: <%= answer.network2_defined %>
+    label:  '<%= answer.network2_label %>'
+    short_hostname: '<%= node.name %>.<%= config.networks.network2.label %>'
+    hostname: '<%= config.networks.network2.short_hostname %>.<%= config.domain %>' 
+    ip: <%= answer.network2_ip %>
+    netmask: <%= answer.network2_netmask %>
+    network: <%= answer.network2_network %>
+  network3:
+    defined: <%= answer.network3_defined %>
+    label:  '<%= answer.network3_label %>'
+    short_hostname: '<%= node.name %>.<%= config.networks.network3.label %>'
+    hostname: '<%= config.networks.network3.short_hostname %>.<%= config.domain %>' 
+    ip: <%= answer.network3_ip %>
+    netmask: <%= answer.network3_netmask %>
+    network: <%= answer.network3_network %>
   external:
-    services: 'ssh'
-  management:
-    services: 'ssh snmp'
-
-postfix:
-  relayhost: "<%= answer.postfix_relay %>"
-
+    defined: <%= answer.external_defined %>

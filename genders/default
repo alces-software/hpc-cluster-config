@@ -1,8 +1,10 @@
 <% groups.each do |group| -%>
 <% next if group.name == 'orphan' -%>
 <% additional_groups = group.answer.genders_additional_groups.empty? ? '' : ',' + group.answer.genders_additional_groups -%>
-<%= group.answer.genders_host_range %>    <%= group.name %>,<%= if group.answer.cloud_or_metal == 'cloud' then 'virtual' else 'physical' end %>,<%= group.answer.genders_host_role %><%= additional_groups %><%= if group.answer.genders_all_group then ',all' else '' end %>
+<%= group.answer.genders_host_range %>	<%= group.name %><%= additional_groups %>,all
 <% end -%>
 <% orphan_list.each do |node| -%>
-<%= node %>    orphan
+<% node_obj = eval "nodes.#{node}" -%>
+<% additional_groups = node_obj.answer.genders_additional_groups.empty? ? '' : ',' + node_obj.answer.genders_additional_groups -%>
+<%= node %>	<%= node_obj.group.name %><%= additional_groups %>,all
 <% end -%>
