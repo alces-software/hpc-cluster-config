@@ -7,7 +7,7 @@ networks:
     defined: true
     label:  '<%= answer.network1_label %>'
     short_hostname: '<%= node.name %>.<%= config.networks.network1.label %>'
-    hostname: '<%= config.networks.network1.short_hostname %>.<%= config.domain %>' 
+    hostname: '<%= config.networks.network1.short_hostname %>.<%= config.domain %>'
     ip: <%= answer.network1_ip %>
     netmask: <%= answer.network1_netmask %>
     network: <%= answer.network1_network %>
@@ -16,7 +16,7 @@ networks:
     defined: <%= answer.network2_defined %>
     label:  '<%= answer.network2_label %>'
     short_hostname: '<%= node.name %>.<%= config.networks.network2.label %>'
-    hostname: '<%= config.networks.network2.short_hostname %>.<%= config.domain %>' 
+    hostname: '<%= config.networks.network2.short_hostname %>.<%= config.domain %>'
     ip: <%= answer.network2_ip %>
     netmask: <%= answer.network2_netmask %>
     network: <%= answer.network2_network %>
@@ -24,7 +24,7 @@ networks:
     defined: <%= answer.network3_defined %>
     label:  '<%= answer.network3_label %>'
     short_hostname: '<%= node.name %>.<%= config.networks.network3.label %>'
-    hostname: '<%= config.networks.network3.short_hostname %>.<%= config.domain %>' 
+    hostname: '<%= config.networks.network3.short_hostname %>.<%= config.domain %>'
     ip: <%= answer.network3_ip %>
     netmask: <%= answer.network3_netmask %>
     network: <%= answer.network3_network %>

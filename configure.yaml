@@ -1,8 +1,8 @@
 questions:
 
-  # 
+  #
   # Base questions
-  # 
+  #
 
   - &cluster_name
     identifier: cluster_name
@@ -46,7 +46,7 @@ questions:
     identifier: network1_gateway
     question: 'IP of gateway for network1'
     default: '10.10.0.1'
-    
+
   # Network2
   - &network2_defined
     identifier: network2_defined
@@ -109,7 +109,7 @@ questions:
   - &genders_host_range
     identifier: genders_host_range
     question: 'List of hosts for the group (in genders format, e.g. "node01,node[05-08]")'
-    
+
   - &genders_additional_groups
     identifier: genders_additional_groups
     question: 'Additional genders groups for this node/group to appear in (e.g. "compute,rack1")'
